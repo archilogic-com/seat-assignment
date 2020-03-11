@@ -1,38 +1,73 @@
-.App {
-  text-align: center;
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+#hello-plan {
+  height: 100%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+body, #root, .App, .ant-layout {
+  height: 100%;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.ant-layout-sider {
+  background: white !important;
 }
 
-.App-link {
-  color: #61dafb;
+.nav {
+  margin: 10px;
+  color: #636e72;
+  font-weight: bold;
+  font-size: 9px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.nav span {
+  color: #636e72;
+  font-size: 5px;
+  position: relative;
+  top: -1px;
+}
+
+.nav-item {
+  color: #2d3436;
+  font-size: 18px;
+}
+
+hr {
+  border:solid 0.5px #636e72;
+}
+
+ul {
+  margin-top: 10px !important;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+ul li {
+  padding: 5px 0px 5px 10px;
+  margin-right: 10px;
+}
+
+li.drag-active {
+  opacity: 0.5;
+}
+
+ul li:hover {
+  background-color: #dfe6e9;
+}
+
+.user-photo img {
+  height: 32px;
+  border-radius: 50%;
+}
+
+.user-name {
+  color: #2d3436;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.user-assignment {
+    color: #636e72;
+    font-size: 10px;
 }
