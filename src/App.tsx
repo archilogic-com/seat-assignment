@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Layout, Row, Col } from 'antd';
-import { RightOutlined } from '@ant-design/icons';
+import { RightOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { UserDb, IUser } from './services/UserService';
+import { EventManager } from './services/EventManager';
+import { getDomElementByFurnitureId } from './services/Helpers'
 import _ from 'lodash';
 
 import './App.css';
@@ -29,6 +31,11 @@ const App = () => {
   const [floorPlan, setFloorPlan] = useState()
   const [userChanges, setUserChanges] = useState<IUserChange>()
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const sceneId = urlParams.get('scene');
+
+  const demoSceneId = sceneId || 'a9aaafdf-d5b6-4b4a-82a0-9efb6d5b155a';
+
   const findFurnitureById = (id: string) => {
     return _.find(furniture, (item) => {
       return item.id === id;
@@ -43,7 +50,7 @@ const App = () => {
 
   const assignedStatus = (user: IUIUser) => {
     if (user.isDragging === true) return "Assigning...";
-    if (user.deskId) return user.deskId;
+    if (user.deskId && user.sceneId === demoSceneId) return "Assigned";
     return "No desk"
   }
 
@@ -87,29 +94,69 @@ const App = () => {
 
   const onDrop = (event: any) => {
     event.preventDefault();
-    let pos = floorPlan.getPlanPosition([event.clientX, event.clientY]);
-    floorPlan.addMarker({
-      pos
-    });
-
+  
     const userId = event
       .dataTransfer
       .getData('text');
     
     const user = findUserById(userId)
     const deskId = event.currentTarget.id.replace('el-', '')
-    if (user) {
-      setUserChanges({
-        type: 'desk',
-        userId: user.id,
-        value: deskId
-      })
-      UserDb.updateRow(user.id, {deskId})
+
+    const furniture = findFurnitureById(deskId);
+    if (furniture && user) {
+      assignSeat(furniture, user)
     }
   }
 
+  const unAssignSeat = (user: any) => {
+    const furniture = findFurnitureById(user.deskId)
+    const elem = getDomElementByFurnitureId(furniture.id)
+    elem?.classList.remove('seat-assigned')
+    EventManager.unregisterEvent(elem, 'click')
+    EventManager.registerEvent(elem, 'drop', onDrop)
+    furniture.node.setHighlight({fill: [0, 184, 148]});
+    
+    setUserChanges({
+      type: 'desk',
+      userId: user.id,
+      value: ''
+    })
+    UserDb.updateRow(user.id, {deskId: '', sceneId: demoSceneId}) 
+  }
+
+  const onFurnitureClick = (user: any, furniture: any) => {
+    floorPlan.addInfoWindow({
+      pos: [furniture.position.x, furniture.position.z],
+      width: 150,
+      height: 80,
+      html: '<div>' + 
+              '<div class="user-photo"><img src="'+user.photoUrl+'"/></div>' + 
+              '<div class="user-name">'+user.firstName+' '+user.lastName+'</div>' + 
+            '</div>',
+      closeButton: true
+    })
+  }
+
+  const assignSeat = (furniture: any, user: any) => {
+    furniture.node.setHighlight({fill: [225, 112, 85]});
+    const elem = getDomElementByFurnitureId(furniture.id)
+    EventManager.registerEvent(elem, 'click', () => { onFurnitureClick(user, furniture) })
+    EventManager.unregisterEvent(elem, 'drop')
+    elem?.classList.add('seat-assigned')
+
+    setUserChanges({
+      type: 'desk',
+      userId: user.id,
+      value: furniture.id
+    })
+    UserDb.updateRow(user.id, {deskId: furniture.id, sceneId: demoSceneId})
+  }
+
+  const isDraggable = (user: any) => {
+     return !(user.deskId && user.sceneId === demoSceneId) 
+  }
+
   useEffect(() => {
-    const demoSceneId = 'a9aaafdf-d5b6-4b4a-82a0-9efb6d5b155a';
     const container = document.getElementById('hello-plan');
     const startupSettings = {
       hideElements: [],
@@ -154,34 +201,33 @@ const App = () => {
       setSpaces(fp.state.computed.spaces)
       setFurniture(fp.state.computed.furniture)
     });
-    
+
+  }, [])
+
+  useEffect(() => {
     spaces.forEach((space: any) => {
       if (space.usage === "Work") {
         space.furniture.forEach((furnitureId: string) => {
           const furniture = findFurnitureById(furnitureId);
-          if (furniture && _.includes(furniture.productData.tags, 'table')) {
-            furniture.node.setHighlight({fill: [255, 140, 100]});
-            document.getElementById("el-"+furnitureId)?.addEventListener("dragover", onDragOver)
-            document.getElementById("el-"+furnitureId)?.addEventListener("drop", onDrop)
+          if (furniture && ( _.includes(furniture.productData.tags, 'work table') || _.includes(furniture.productData.tags, 'table'))) {
+            furniture.node.setHighlight({fill: [0, 184, 148]});
+            const elem = getDomElementByFurnitureId(furnitureId);
+            EventManager.registerEvent(elem, 'dragover', onDragOver)
+            EventManager.registerEvent(elem, 'drop', onDrop)
             setDesks([...desks, furniture])
           }
         })
       }
     });
 
-  }, [])
-
-  useEffect(() => {
     users?.forEach((user) => {
-      if(user.deskId) {
+      if(user.deskId && user.sceneId === demoSceneId) {
         spaces.forEach((space: any) => {
           if (space.usage === "Work") {
             space.furniture.forEach((furnitureId: string) => {
-              if (furnitureId === user.deskId) {
+              if (furnitureId === user.deskId && user.sceneId === demoSceneId) {
                 const furniture = findFurnitureById(furnitureId);
-                floorPlan.addMarker({
-                  pos: [furniture.position.x, furniture.position.z]
-                });
+                assignSeat(furniture, user)
               }
             })
           }
@@ -189,24 +235,7 @@ const App = () => {
       }
     })
 
-    spaces.forEach((space: any) => {
-      if (space.usage === "Work") {
-        space.furniture.forEach((furnitureId: string) => {
-          const furniture = findFurnitureById(furnitureId);
-          if (furniture && _.includes(furniture.productData.tags, 'table')) {
-            furniture.node.setHighlight({fill: [255, 140, 100]});
-            document.getElementById("el-"+furnitureId)?.addEventListener("dragover", onDragOver)
-            document.getElementById("el-"+furnitureId)?.addEventListener("drop", onDrop)
-            setDesks([...desks, furniture])
-          }
-        })
-      }
-    });
   }, [furniture])
-  
-  useEffect(() => {
-    console.log(users);
-  }, [users])
 
   useEffect(() => {
     if(!_.isUndefined(userChanges)) {
@@ -218,7 +247,7 @@ const App = () => {
           break;
         case "desk":
           setUsers(users?.map((stateUser) => {
-            return stateUser.id === userChanges.userId ? {...stateUser, "deskId": userChanges.value} : stateUser;
+            return stateUser.id === userChanges.userId ? {...stateUser, "deskId": userChanges.value, "sceneId": demoSceneId} : stateUser;
           }))
           break;
         case "dragStop":
@@ -244,10 +273,11 @@ const App = () => {
             return (
               <li
                 data-user-id={user.id}
-                draggable 
+                draggable={isDraggable(user)} 
                 onDragStart={onDragStart} 
                 onDragEnd={onDragEnd}
                 key={index}
+                className={(isDraggable(user) ? 'draggable' : '')}
               >
                 <Row>
                   <Col span={6}>
@@ -255,9 +285,14 @@ const App = () => {
                       <img alt={user.firstName + ' ' + user.lastName} src={user.photoUrl}/>
                     </div>
                   </Col>
-                  <Col span={18}>
+                  <Col span={14}>
                     <div className="user-name">{user.firstName} {user.lastName}</div>
                     <div className="user-assignment">{assignedStatus(user)}</div>
+                  </Col>
+                  <Col span={4}>
+                    {user.deskId && user.sceneId === demoSceneId &&
+                    <span className="remove-assignment" onClick={ () => { unAssignSeat(user)}}><CloseCircleOutlined /></span>
+                    }
                   </Col>
                 </Row>    
               </li>

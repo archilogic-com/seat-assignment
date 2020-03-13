@@ -5,7 +5,8 @@ export interface IUser {
     firstName: string,
     lastName: string,
     photoUrl?: string,
-    deskId?: string
+    deskId?: string,
+    sceneId?: string
 }
 
 export interface IDb {
@@ -37,28 +38,32 @@ if (all().length === 0) {
             "firstName": "Jorge",
             "lastName": "Sierra",
             "photoUrl": "https://media-exp1.licdn.com/dms/image/C5622AQGv_4ANX6IH8w/feedshare-shrink_800/0?e=1585785600&v=beta&t=Dj_nKv7ltsLAWKXRZRxWrceLovflrf7Ql08o2t5nwlw",
-            "deskId": ''
+            "deskId": '',
+            "sceneId": ''
         },
         {   
             "id": 2,
             "firstName": "Martin",
             "lastName": "Daguerre",
             "photoUrl": "https://www.lagarsoft.com/img/martin_800x800.jpeg",
-            "deskId": ''
+            "deskId": '',
+            "sceneId": ''
         },
         {   
             "id": 3,
             "firstName": "Pablo",
             "lastName": "Gancharov",
             "photoUrl": "https://www.lagarsoft.com/img/pablo_800x800.jpeg",
-            "deskId": ''
+            "deskId": '',
+            "sceneId": ''
         },
         {   
             "id": 4,
             "firstName": "Julio",
             "lastName": "Sarachaga",
             "photoUrl": "https://www.lagarsoft.com/img/julio_800x800.jpeg",
-            "deskId": ''
+            "deskId": '',
+            "sceneId": ''
         }
     ]);
 }
