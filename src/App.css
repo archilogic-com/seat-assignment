@@ -2,7 +2,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
 }
 
-#hello-plan {
+#floor-plan {
   height: 100%;
 }
 
@@ -69,11 +69,11 @@ ul li:hover {
 }
 
 .user-assignment {
-    color: #636e72;
-    font-size: 10px;
+  color: #636e72;
+  font-size: 10px;
 }
 
-.seat-assigned {
+.desk-assigned {
   cursor: pointer;
 }
 
