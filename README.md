@@ -1,4 +1,4 @@
-# Seat Assignment with Archilogic
+# Archilogic Seat Assignment App Example
 
 You can see this demo running [here](https://archilogic-seat-assignment.herokuapp.com/)
 
