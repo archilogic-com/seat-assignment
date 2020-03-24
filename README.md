@@ -140,4 +140,4 @@ This is a [Secret API](https://developers.archilogic.com/space-api/v1/introducti
 Very nice article [here](https://alligator.io/js/drag-and-drop-vanilla-js/) from Jess Mitchell
 
 `Why do we need an EventManager?`  
-We need i to handle removing event listeners that were created with an anonymous function. Another great article [here](https://medium.com/@DavideRama/removeeventlistener-and-anonymous-functions-ab9dbabd3e7b) by Davide Rama
+We need it to handle removing event listeners that were created with an anonymous function. Another great article [here](https://medium.com/@DavideRama/removeeventlistener-and-anonymous-functions-ab9dbabd3e7b) by Davide Rama
