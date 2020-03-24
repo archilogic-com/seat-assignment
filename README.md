@@ -39,7 +39,7 @@ http://localhost:3001/?scene=0246512e-973c-4e52-a1f2-5f0008e9ee9c
 
 ### The App
 
-We want to have the ability to assign a desk to a user so that we can see which desks are free and where are users seated.
+We want to have the ability to assign a desk to a user so that we can see which desks are free and where users are seated.
 
 ### Highlighting available desks in a floor
 
