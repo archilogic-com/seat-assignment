@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef, DragEvent } from 'react'
 import _ from 'lodash'
 
 import { findById, getElementByFurnitureItemId } from '../shared/Helpers'
-import { EventManager, EventType } from '../shared/EventManager'
 import UserService, { IDeskAssignment, IUser } from '../shared/services/UserService'
+import { EventManager, EventType } from '../shared/EventManager'
 
 declare var FloorPlanEngine: any
 
@@ -66,7 +66,7 @@ const FloorPlan = (props: FloorPlanProps) => {
 
     const isDesk = (furnitureItem: any) => {
         return _.some(deskTags, (tag) => {
-          return _.includes(furnitureItem.productData.tags, tag)
+          return _.includes(furnitureItem.tags, tag)
         })
     }
 
@@ -74,8 +74,8 @@ const FloorPlan = (props: FloorPlanProps) => {
     const highlightDesks = (spaces: Array<any>, furniture: Array<any>, floorPlan: any) => {
         const desks: any[] = []
         spaces.forEach((space: any) => {
-            if (space.usage === "Work") {
-                space.furniture.forEach((furnitureItemId: string) => {
+            if (space.usage === "work") {
+                space.assets.forEach((furnitureItemId: string) => {
                     const furnitureItem = findById(furniture, furnitureItemId)
                     if (furnitureItem && isDesk(furnitureItem)) {
                         highlightDesk(furnitureItem, floorPlan)
@@ -91,9 +91,11 @@ const FloorPlan = (props: FloorPlanProps) => {
         furnitureItem.node.setHighlight({fill: colors.assignable})
         const elem = getElementByFurnitureItemId(furnitureItem.id)
         elem?.classList.remove('desk-assigned')
-        EventManager.registerEvent(elem, EventType.dragover, onDragOver)
-        EventManager.registerEvent(elem, EventType.drop, (e: DragEvent) => { onDrop(e, furnitureItem, floorPlan) })
-        EventManager.unregisterEvent(elem, EventType.click)
+        // EventManager.registerEvent(elem, EventType.dragover, onDragOver)
+        // EventManager.registerEvent(elem, EventType.drop, (e: DragEvent) => { onDrop(e, furnitureItem, floorPlan) })
+        // EventManager.unregisterEvent(elem, EventType.click)
+        // furnitureItem.on('click', ()=>{alert(123)})
+
     }
 
     // highlight assigned desks
@@ -112,9 +114,9 @@ const FloorPlan = (props: FloorPlanProps) => {
         furnitureItem.node.setHighlight({fill: colors.assigned})
         const elem = getElementByFurnitureItemId(furnitureItem.id)
         elem?.classList.add('desk-assigned')
-        EventManager.registerEvent(elem, EventType.click, () => { onDeskClick(user, furnitureItem, floorPlan) })
-        EventManager.unregisterEvent(elem, EventType.dragover)
-        EventManager.unregisterEvent(elem, EventType.drop)
+        // EventManager.registerEvent(elem, EventType.click, () => { onDeskClick(user, furnitureItem, floorPlan) })
+        // EventManager.unregisterEvent(elem, EventType.dragover)
+        // EventManager.unregisterEvent(elem, EventType.drop)
     }
 
     // load floorPlan and highlight desks
@@ -122,8 +124,8 @@ const FloorPlan = (props: FloorPlanProps) => {
         const container = document.getElementById(containerId)
         const floorPlan = new FloorPlanEngine(container, floorPlanStartupSettings)
         floorPlan.loadScene(sceneId).then(() => {
-            const spaces = floorPlan.state.computed.spaces
-            const furniture = floorPlan.state.computed.furniture
+            const spaces = floorPlan.resources.spaces || []
+            const furniture = floorPlan.resources.assets || []
             setFloorPlan(floorPlan)
             highlightDesks(spaces, furniture, floorPlan)
         })
