@@ -128,6 +128,11 @@ const FloorPlan = (props: FloorPlanProps) => {
             const furniture = floorPlan.resources.assets || []
             setFloorPlan(floorPlan)
             highlightDesks(spaces, furniture, floorPlan)
+            floorPlan.on('drop', (e: any) => {
+                const position = [e.clientX, e.clientY];
+                console.log(e);
+                console.log(floorPlan.getResourcesFromPosition(floorPlan.getPlanPosition(position)))
+            });
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
