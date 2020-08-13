@@ -78,13 +78,25 @@ const App = () => {
     // add desk assignment
     if (!deskAssignment) return
     
+    // check if the desk was taken to clear out previous assignment
+    const assignmentToReplace = _.find(deskAssignments, (item) => {
+      return String(item.deskId) === String(deskAssignment.deskId)
+    });
+
     setUsers(users?.map((stateUser) => {
       return stateUser.id === deskAssignment.userId ? {...stateUser, "isLoading": true} : stateUser
     }))
 
     // add assignment
     AssetService.assignUser(deskAssignment).then( () => {
-      setDeskAssignments(deskAssignments.concat(deskAssignment))
+      if (assignmentToReplace) {
+        setDeskAssignments(deskAssignments.filter( (item) => {
+          return item.deskId !== assignmentToReplace.deskId 
+        }).concat(deskAssignment))
+      } else {
+        setDeskAssignments(deskAssignments.concat(deskAssignment))
+      }
+      
       setUsers(users?.map((stateUser) => {
         return stateUser.id === deskAssignment.userId ? {...stateUser, "isLoading": false, "isDragging": false} : stateUser
       }))
