@@ -71,14 +71,14 @@ const FloorPlan = (props: FloorPlanProps) => {
     }
 
     // highlight assets that are desks
-    const highlightDesks = (spaces: Array<any>, furniture: Array<any>, floorPlan: any) => {
+    const highlightDesks = (spaces: Array<any>, furniture: Array<any>) => {
         const desks: any[] = []
         spaces.forEach((space: any) => {
             if (space.usage === "work") {
                 space.assets.forEach((furnitureItemId: string) => {
                     const furnitureItem = findById(furniture, furnitureItemId)
                     if (furnitureItem && isDesk(furnitureItem)) {
-                        highlightDesk(furnitureItem, floorPlan)
+                        highlightDesk(furnitureItem)
                         desks.push(furnitureItem)
                     }
                 })
@@ -87,23 +87,23 @@ const FloorPlan = (props: FloorPlanProps) => {
         setDesks(desks)
     }
 
-    const highlightDesk = (furnitureItem: any, floorPlan: any) => {
+    const highlightDesk = (furnitureItem: any) => {
         furnitureItem.node.setHighlight({fill: colors.assignable})
     }
 
     // highlight assigned desks
-    const highlightAssignedDesks = (deskAssignments: Array<IDeskAssignment>, desks: Array<any>, floorPlan: any ) => {
+    const highlightAssignedDesks = (deskAssignments: Array<IDeskAssignment>, desks: Array<any>) => {
         deskAssignments.forEach( (deskAssignment: IDeskAssignment) => {
             const furnitureItem = findById(desks, deskAssignment.deskId)
             const user = UserService.findById(deskAssignment.userId)
             
             if (!furnitureItem || !user) return
 
-            highlightAssignedDesk(furnitureItem, floorPlan)
+            highlightAssignedDesk(furnitureItem)
         })
     }
 
-    const highlightAssignedDesk = (furnitureItem: any, floorPlan: any) => {
+    const highlightAssignedDesk = (furnitureItem: any) => {
         furnitureItem.node.setHighlight({fill: colors.assigned})
     }
 
@@ -115,7 +115,7 @@ const FloorPlan = (props: FloorPlanProps) => {
             const spaces = floorPlan.resources.spaces || []
             const furniture = floorPlan.resources.assets || []
             setFloorPlan(floorPlan)
-            highlightDesks(spaces, furniture, floorPlan)
+            highlightDesks(spaces, furniture)
 
             floorPlan.on('drop', (event: DragEvent) => onDrop(event, floorPlan));
             floorPlan.on('click', (event: any) => onDeskClick(event, floorPlan));
@@ -127,7 +127,7 @@ const FloorPlan = (props: FloorPlanProps) => {
     useEffect(() => {
         if (desks.length === 0) return
         if (deskAssignmentsLoaded.current === true) return
-        highlightAssignedDesks(deskAssignments, desks, floorPlan)
+        highlightAssignedDesks(deskAssignments, desks)
         deskAssignmentsLoaded.current = true
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [deskAssignments, desks, floorPlan])
@@ -139,7 +139,7 @@ const FloorPlan = (props: FloorPlanProps) => {
         const furnitureItem = findById(desks, removedDeskAssignment.deskId)
         if (!furnitureItem) return
 
-        highlightDesk(furnitureItem, floorPlan)
+        highlightDesk(furnitureItem)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [removedDeskAssignment, desks, floorPlan])
@@ -199,7 +199,7 @@ const FloorPlan = (props: FloorPlanProps) => {
             deskId: furnitureItem.id
         })
 
-        highlightAssignedDesk(furnitureItem, floorPlan)
+        highlightAssignedDesk(furnitureItem)
     }
 
     return (
