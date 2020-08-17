@@ -37,9 +37,29 @@ The project loads a default scene. You can set a different scene by adding `?sce
 http://localhost:3001/?scene=0246512e-973c-4e52-a1f2-5f0008e9ee9c
 ```
 
+### Archilogic library setup
+
+Index file `public\index.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Book rooms using Archilogic Floor Plan Engine" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+
+    <script src="https://code.archilogic.com/fpe-sdk/v2.0.0/fpe.js?key=%REACT_APP_ARCHILOGIC_PUBLISHABLE_API_KEY%"></script>
+
+```
+
 ### The App
 
-We want to have the ability to assign a desk to a user so that we can see which desks are free and where users are seated.
+We need the ability to assign a desk to a user so that we can see which desks are free and which are taken.
 
 ### Highlighting available desks in a floor
 
@@ -62,40 +82,48 @@ const highlightDesks = (spaces: Array<any>, furniture: Array<any>, floorPlan: an
 }
 ```
 
-### Making an available desk a drop target
+### Highlight available desks
 
 in `components/FloorPlan.tsx`
 
 ```javascript
-const highlightDesk = (furnitureItem: any, floorPlan: any) => {
+const highlightDesk = (furnitureItem: any) => {
     furnitureItem.node.setHighlight({fill: colors.assignable})
-    // In order to add a click event listener to the asset, we need to get its dom element
-    const elem = getElementByFurnitureItemId(furnitureItem.id)
-    EventManager.registerEvent(elem, EventType.dragover, onDragOver)
-    EventManager.registerEvent(elem, EventType.drop, (e: DragEvent) => { onDrop(e, furnitureItem, floorPlan) })
 }
 ```
 
-### Making an assigned desk clickable to display the assigned user
+### Assigning a desk (drag and drop)
 
 in `components/FloorPlan.tsx`
 
 ```javascript
-const onDrop = (event: DragEvent, furnitureItem: any, floorPlan: any) => {
-    event.preventDefault()
+const onDrop = (event: DragEvent, floorPlan: any) => {
+    event.preventDefault();
 
-    const userId = event
-        .dataTransfer
-        .getData('text')
-        ...
-        highlightAssignedDesk(furnitureItem, user, floorPlan)
-    }
+    const position = [event.offsetX, event.offsetY];
+    const { assets } = floorPlan.getResourcesFromPosition(floorPlan.getPlanPosition(position));
+
+    if (assets.length === 0 || !isDesk(assets[0])) return;
+    const furnitureItem = assets[0];
+
+    const userId = event?.dataTransfer?.getData('text')
+
+    if (!userId) return;
+
+    const user = UserService.findById(parseInt(userId))
+
+    if (!furnitureItem || !user) return
+
+    addDeskAssignment({
+        userId: parseInt(userId),
+        deskId: furnitureItem.id
+    })
+
+    highlightAssignedDesk(furnitureItem)
 }
 
-const highlightAssignedDesk = (furnitureItem: any, user: IUser, floorPlan: any) => {
+const highlightAssignedDesk = (furnitureItem: any, user: IUser) => {
     furnitureItem.node.setHighlight({fill: colors.assigned})
-    const elem = getElementByFurnitureItemId(furnitureItem.id)
-    EventManager.registerEvent(elem, EventType.click, () => { onDeskClick(user, furnitureItem, floorPlan) })
 }
 ```
 
@@ -104,9 +132,26 @@ const highlightAssignedDesk = (furnitureItem: any, user: IUser, floorPlan: any) 
 in `components/FloorPlan.tsx`
 
 ```javascript
-const onDeskClick = (user: IUser, furnitureItem: any, floorPlan: any) => {
-    floorPlan.addInfoWindow({
-        pos: [furnitureItem.position.x, furnitureItem.position.z],
+const onDeskClick = (event: any, floorPlan: any) => {
+    const { assets } = floorPlan.getResourcesFromPosition(event.pos);
+    if (assets.length === 0 || !isDesk(assets[0])) return;
+    const furnitureItem = assets[0];
+
+    setClickedDesk(furnitureItem);
+}
+
+useEffect(() => {
+    if (!clickedDesk || !floorPlan) return
+
+    const assignment = _.find(deskAssignments, (item) => {
+        return String(item.deskId) === String(clickedDesk.id)
+    });
+
+    if(!assignment) return;
+    const user = UserService.findById(assignment.userId)
+
+    clickedDesk.infoWindow = floorPlan.addInfoWindow({
+        pos: [clickedDesk.position.x, clickedDesk.position.z],
         width: 150,
         height: 80,
         html: '<div>' +
@@ -115,7 +160,10 @@ const onDeskClick = (user: IUser, furnitureItem: any, floorPlan: any) => {
             '</div>',
         closeButton: true
     })
-}
+
+    return () => { clickedDesk.infoWindow.remove(); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [clickedDesk, deskAssignments, floorPlan])
 ```
 
 ### Saving the user id in an asset's custom field via the Space API
@@ -138,6 +186,3 @@ This is a [Secret API](https://developers.archilogic.com/space-api/v1/introducti
 
 `How does the HTML drag and drop API work?`  
 Very nice article [here](https://alligator.io/js/drag-and-drop-vanilla-js/) from Jess Mitchell
-
-`Why do we need an EventManager?`  
-We need it to handle removing event listeners that were created with an anonymous function. Another great article [here](https://medium.com/@DavideRama/removeeventlistener-and-anonymous-functions-ab9dbabd3e7b) by Davide Rama
