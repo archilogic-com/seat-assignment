@@ -117,7 +117,7 @@ const FloorPlan = (props: FloorPlanProps) => {
             setFloorPlan(floorPlan)
             highlightDesks(spaces, furniture)
 
-            floorPlan.on('drop', (event: DragEvent) => onDrop(event, floorPlan));
+            floorPlan.on('drop', (event: any) => onDrop(event, floorPlan));
             floorPlan.on('click', (event: any) => onDeskClick(event, floorPlan));
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -177,7 +177,9 @@ const FloorPlan = (props: FloorPlanProps) => {
         setClickedDesk(furnitureItem);
     }
     
-    const onDrop = (event: DragEvent, floorPlan: any) => {
+    const onDrop = (archilogicEvent: any, floorPlan: any) => {
+        const event = archilogicEvent.sourceEvent;
+
         event.preventDefault();
 
         const position = [event.offsetX, event.offsetY];
