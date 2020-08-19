@@ -53,7 +53,7 @@ Index file `public\index.html`:
     <meta name="description" content="Book rooms using Archilogic Floor Plan Engine" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
 
-    <script src="https://code.archilogic.com/fpe-sdk/v2.0.0/fpe.js?key=%REACT_APP_ARCHILOGIC_PUBLISHABLE_API_KEY%"></script>
+    <script src="https://code.archilogic.com/fpe-sdk/v2.0.x/fpe.js?key=%REACT_APP_ARCHILOGIC_PUBLISHABLE_API_KEY%"></script>
 
 ```
 
@@ -97,30 +97,32 @@ const highlightDesk = (furnitureItem: any) => {
 in `components/FloorPlan.tsx`
 
 ```javascript
-const onDrop = (event: DragEvent, floorPlan: any) => {
-    event.preventDefault();
+const onDrop = (archilogicEvent: any, floorPlan: any) => {
+        const event = archilogicEvent.sourceEvent;
 
-    const position = [event.offsetX, event.offsetY];
-    const { assets } = floorPlan.getResourcesFromPosition(floorPlan.getPlanPosition(position));
+        event.preventDefault();
 
-    if (assets.length === 0 || !isDesk(assets[0])) return;
-    const furnitureItem = assets[0];
+        const position = [event.offsetX, event.offsetY];
+        const { assets } = floorPlan.getResourcesFromPosition(floorPlan.getPlanPosition(position));
+        
+        if (assets.length === 0 || !isDesk(assets[0])) return;
+        const furnitureItem = assets[0];
 
-    const userId = event?.dataTransfer?.getData('text')
+        const userId = event?.dataTransfer?.getData('text')
+  
+        if (!userId) return;        
+        
+        const user = UserService.findById(parseInt(userId))
 
-    if (!userId) return;
+        if (!furnitureItem || !user) return
 
-    const user = UserService.findById(parseInt(userId))
+        addDeskAssignment({
+            userId: parseInt(userId), 
+            deskId: furnitureItem.id
+        })
 
-    if (!furnitureItem || !user) return
-
-    addDeskAssignment({
-        userId: parseInt(userId),
-        deskId: furnitureItem.id
-    })
-
-    highlightAssignedDesk(furnitureItem)
-}
+        highlightAssignedDesk(furnitureItem)
+    }
 
 const highlightAssignedDesk = (furnitureItem: any, user: IUser) => {
     furnitureItem.node.setHighlight({fill: colors.assigned})
