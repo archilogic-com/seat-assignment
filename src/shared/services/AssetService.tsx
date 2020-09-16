@@ -1,6 +1,8 @@
-import axios from 'axios'
 import { IDeskAssignment } from './UserService'
 import { PROXY_URL } from '../constants'
+import { env } from 'process'
+import { constants } from 'buffer'
+import axios from 'axios'
 
 export interface IAsset {
     id: string
@@ -13,10 +15,11 @@ export interface IAssetService {
 }
 
 export const assignedToPath = 'properties.customFields.assignedTo'
+
 const resourceType = 'asset'
 
 const assignUser = (deskAssignment: IDeskAssignment) => {
-    return axios.put(`${PROXY_URL}/v1/${resourceType}/${deskAssignment.deskId}/custom-field/${assignedToPath}`, {userId: deskAssignment.userId})
+    return axios.put(`${PROXY_URL}/v1/${resourceType}/${deskAssignment.deskId}/custom-field/${assignedToPath}`, { userId: deskAssignment.userId })
 }
 
 const removeUser = (assetId: string) => {

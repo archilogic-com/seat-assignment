@@ -33,7 +33,7 @@ const App = () => {
     setUsers(UserService.getAll())
 
     // load floor data
-    FloorService.findById(sceneId).then( (response: any) => {
+    FloorService.findById(sceneId).then((response: any) => {
       setFloor({
         id: response.data.id,
         name: response.data.properties.name
@@ -41,13 +41,13 @@ const App = () => {
     })
 
     // get floor's assets to load already existing desk assignments
-    AssetService.fetchFloorAssets(sceneId).then( (response: any) => {
-      setDeskAssignments(response.data.features.filter( (feature: any) => {
-        return !_.isUndefined(_.get(feature, assignedToPath+'.userId'))
-      }).map( (feature: any) => {
+    AssetService.fetchFloorAssets(sceneId).then((response: any) => {
+      setDeskAssignments(response.data.features.filter((feature: any) => {
+        return !_.isUndefined(_.get(feature, assignedToPath + '.userId'))
+      }).map((feature: any) => {
         return {
           deskId: feature.id,
-          userId: _.get(feature, assignedToPath+'.userId')
+          userId: _.get(feature, assignedToPath + '.userId')
         }
       }))
       isLoading(false)
@@ -59,62 +59,62 @@ const App = () => {
     if (!removedDeskAssignment) return
 
     setUsers(users?.map((stateUser) => {
-      return stateUser.id === removedDeskAssignment.userId ? {...stateUser, "isLoading": true} : stateUser
+      return stateUser.id === removedDeskAssignment.userId ? { ...stateUser, "isLoading": true } : stateUser
     }))
 
-    AssetService.removeUser(removedDeskAssignment.deskId).then( () => {
-      setDeskAssignments(deskAssignments.filter( (item) => {
-          return item.deskId !== removedDeskAssignment.deskId 
+    AssetService.removeUser(removedDeskAssignment.deskId).then(() => {
+      setDeskAssignments(deskAssignments.filter((item) => {
+        return item.deskId !== removedDeskAssignment.deskId
       }))
       setUsers(users?.map((stateUser) => {
-        return stateUser.id === removedDeskAssignment.userId ? {...stateUser, "isLoading": false} : stateUser
+        return stateUser.id === removedDeskAssignment.userId ? { ...stateUser, "isLoading": false } : stateUser
       }))
     })
-    
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [removedDeskAssignment])
 
   useEffect(() => {
     // add desk assignment
     if (!deskAssignment) return
-    
+
     // check if the desk was taken to clear out previous assignment
     const assignmentToReplace = _.find(deskAssignments, (item) => {
       return String(item.deskId) === String(deskAssignment.deskId)
     });
 
     setUsers(users?.map((stateUser) => {
-      return stateUser.id === deskAssignment.userId ? {...stateUser, "isLoading": true} : stateUser
+      return stateUser.id === deskAssignment.userId ? { ...stateUser, "isLoading": true } : stateUser
     }))
 
     // add assignment
-    AssetService.assignUser(deskAssignment).then( () => {
+    AssetService.assignUser(deskAssignment).then(() => {
       if (assignmentToReplace) {
-        setDeskAssignments(deskAssignments.filter( (item) => {
-          return item.deskId !== assignmentToReplace.deskId 
+        setDeskAssignments(deskAssignments.filter((item) => {
+          return item.deskId !== assignmentToReplace.deskId
         }).concat(deskAssignment))
       } else {
         setDeskAssignments(deskAssignments.concat(deskAssignment))
       }
-      
+
       setUsers(users?.map((stateUser) => {
-        return stateUser.id === deskAssignment.userId ? {...stateUser, "isLoading": false, "isDragging": false} : stateUser
+        return stateUser.id === deskAssignment.userId ? { ...stateUser, "isLoading": false, "isDragging": false } : stateUser
       }))
     })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deskAssignment])
-  
+
   return (
     <div className="App">
       <Layout>
         <Sider>
-          <Navigation floor={floor}/>
-          <hr/>
-          <UsersList 
-            users={users} 
-            deskAssignments={deskAssignments} 
-            sceneId={sceneId} 
+          <Navigation floor={floor} />
+          <hr />
+          <UsersList
+            users={users}
+            deskAssignments={deskAssignments}
+            sceneId={sceneId}
             setUsers={setUsers}
             removeDeskAssignment={removeDeskAssignment}
             loading={loading}
@@ -122,12 +122,12 @@ const App = () => {
         </Sider>
         <Layout>
           <Content>
-            <FloorPlan 
-              sceneId={sceneId} 
+            <FloorPlan
+              sceneId={sceneId}
               deskAssignments={deskAssignments}
               addDeskAssignment={addDeskAssignment}
               removedDeskAssignment={removedDeskAssignment}
-              />
+            />
           </Content>
         </Layout>
       </Layout>

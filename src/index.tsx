@@ -3,6 +3,16 @@ import ReactDOM from 'react-dom'
 import './index.css'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
+import axios from 'axios'
+
+axios.interceptors.request.use((config) => {
+    config.params = config.params || {};
+    config.params['token'] = process.env.REACT_APP_ARCHILOGIC_PUBLISHABLE_API_KEY;
+
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
 
 ReactDOM.render(<App />, document.getElementById('root'))
 
