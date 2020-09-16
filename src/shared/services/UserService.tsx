@@ -23,25 +23,25 @@ export interface IUserService {
 }
 
 const users: Array<IUser> = [
-    {   
+    {
         "id": 1,
         "firstName": "Jorge",
         "lastName": "Sierra",
         "photoUrl": "https://i.pravatar.cc/300?img=59"
     },
-    {   
+    {
         "id": 2,
         "firstName": "Martin",
         "lastName": "Daguerre",
         "photoUrl": "https://i.pravatar.cc/300?img=18"
     },
-    {   
+    {
         "id": 3,
         "firstName": "Pablo",
         "lastName": "Gancharov",
         "photoUrl": "https://i.pravatar.cc/300?img=15"
     },
-    {   
+    {
         "id": 4,
         "firstName": "Julio",
         "lastName": "Saráchaga",
@@ -50,7 +50,7 @@ const users: Array<IUser> = [
 ]
 
 const getAll = (): Array<IUserElement> => {
-    return users.map((user)=>{
+    return users.map((user) => {
         return _.assign(user, {
             isDragging: false,
             isLoading: false
@@ -71,6 +71,6 @@ const UserService: IUserService = {
 
 export default UserService
 
-    
 
-    
+
+

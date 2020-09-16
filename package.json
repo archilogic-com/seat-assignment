@@ -9,10 +9,7 @@
     "@types/react-dom": "^16.9.5",
     "antd": "^4.0.0",
     "axios": "^0.19.2",
-    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "http-proxy-middleware": "^1.0.3",
     "lodash": "^4.17.15",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
@@ -20,10 +17,9 @@
     "typescript": "^3.7.5"
   },
   "scripts": {
-    "start": "npm run init-server & PORT=3001 react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
-    "init-app": "react-scripts start",
-    "init-server": "node ./backend/server.js"
+    "init-app": "react-scripts start"
   },
   "eslintConfig": {
     "extends": "react-app"
