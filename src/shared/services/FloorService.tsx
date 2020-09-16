@@ -10,8 +10,9 @@ export interface IFloorService {
     findById: Function
 }
 
+
 const findById = (floorId: string) => {
-    return axios.get(`${PROXY_URL}/v1/floor/${floorId}?token=${process.env.REACT_APP_ARCHILOGIC_PUBLISHABLE_API_KEY}`)
+    return axios.get(`${PROXY_URL}/v1/floor/${floorId}`)
 }
 const FloorService: IFloorService = {
     findById: findById
