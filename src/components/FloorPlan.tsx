@@ -74,7 +74,7 @@ const FloorPlan = (props: FloorPlanProps) => {
     const highlightDesks = (spaces: Array<any>, furniture: Array<any>) => {
         const desks: any[] = []
         spaces.forEach((space: any) => {
-            if (space.usage === "work") {
+            if (space.usage === "work" || space.usage === "openWorkspace") {
                 space.assets.forEach((furnitureItemId: string) => {
                     const furnitureItem = findById(furniture, furnitureItemId)
                     if (furnitureItem && isDesk(furnitureItem)) {
