@@ -17,7 +17,7 @@ import { DEFAULT_SCENE_ID } from './shared/constants'
 const App = () => {
   const { Sider, Content } = Layout
   const urlParams = new URLSearchParams(window.location.search)
-  const sceneId = urlParams.get('scene') || urlParams.get('sceneId') || DEFAULT_SCENE_ID
+  const sceneId = urlParams.get('sceneId') || DEFAULT_SCENE_ID
   
 
 
