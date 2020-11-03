@@ -13,6 +13,7 @@
     "lodash": "^4.17.15",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
+    "react-media": "^1.10.0",
     "react-scripts": "3.4.0",
     "typescript": "^3.7.5"
   },
