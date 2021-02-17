@@ -22,19 +22,18 @@ In the project directory, you can run:
 Installs all the dependencies needed for the project to run locally.
 
 To run the app we'll need to set some environment variables first.  
-We'll need a publishable API key for the [Floor Plan Engine SDK](https://developers.archilogic.com/floor-plan-engine/guide.html) and a secret API key for the [Space API](https://developers.archilogic.com/space-api/v1/introduction.html).  
+We'll need an API key for the [https://developers.archilogic.com/api-keys.html](https://developers.archilogic.com/api-keys.html) 
+
+![](token.png)
+
 Once you have these keys, please create a .env file  (you can copy it from .env.example) and fill in the values for REACT_APP_ARCHILOGIC_PUBLISHABLE_API_KEY and SERVER_ARCHILOGIC_SECRET_API_KEY.
 
 ### `npm start`
 
-Runs the app in the development mode.  
-An express app that proxies Archilogic's Space API will run on [http://localhost:3000](http://localhost:3000).  
-Open [http://localhost:3001](http://localhost:3001) to view it in the browser.
-
-The project loads a default scene. You can set a different scene by adding `?scene=THIS_IS_ANOTHER_SCENE_ID`.  
+The project loads a default scene. You can set a different scene by adding `?sceneId=THIS_IS_ANOTHER_SCENE_ID`.  
 
 ```html
-http://localhost:3001/?scene=0246512e-973c-4e52-a1f2-5f0008e9ee9c
+http://localhost:3001/?sceneId=0246512e-973c-4e52-a1f2-5f0008e9ee9c
 ```
 
 ### Archilogic library setup
