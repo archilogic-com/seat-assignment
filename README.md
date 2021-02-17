@@ -24,7 +24,7 @@ Once you have these keys, please create a .env file  (you can copy it from .env.
 Update .env variables:
 
 	REACT_APP_ARCHILOGIC_PUBLISHABLE_API_KEY=YOUR_TOKEN
-	REACT_APP_API_BASE_URL=https://api.archilogic.com
+	REACT_APP_ARCHILOGIC_API_URL=https://api.archilogic.com
 
 To run the application execute:
 
