@@ -7,15 +7,15 @@
     "@types/node": "^12.12.29",
     "@types/react": "^16.9.23",
     "@types/react-dom": "^16.9.5",
-    "antd": "^4.0.0",
-    "axios": "^0.19.2",
+    "antd": "^4.6.3",
+    "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "lodash": "^4.17.15",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-media": "^1.10.0",
     "react-scripts": "3.4.0",
-    "typescript": "^3.7.5"
+    "typescript": "~3.8.2"
   },
   "scripts": {
     "start": "react-scripts start",
