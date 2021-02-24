@@ -126,6 +126,7 @@ const FloorPlan = (props: FloorPlanProps) => {
     // highlight assigned desks, we only want to execute it once, when desk assignments are loaded
     useEffect(() => {
         if (desks.length === 0) return
+        if (deskAssignments.length === 0) return
         if (deskAssignmentsLoaded.current === true) return
         highlightAssignedDesks(deskAssignments, desks)
         deskAssignmentsLoaded.current = true
