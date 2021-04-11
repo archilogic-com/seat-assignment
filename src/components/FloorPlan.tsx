@@ -36,7 +36,7 @@ const floorPlanStartupSettings = {
 }
 
 // tags used to establish which assets are 'assignable'
-const deskTags = ['table', 'work table']
+export const deskTags = ['table', 'work table']
 
 const colors = {
   assignable: [0, 184, 148],

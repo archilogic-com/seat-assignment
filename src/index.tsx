@@ -1,19 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import './index.css'
-import App from './App'
-import * as serviceWorker from './serviceWorker'
-import axios from 'axios'
 import Media from 'react-media'
-
-axios.interceptors.request.use((config) => {
-    config.params = config.params || {};
-    config.params['token'] = process.env.REACT_APP_ARCHILOGIC_PUBLISHABLE_API_KEY;
-
-    return config;
-}, (error) => {
-    return Promise.reject(error);
-});
+import App from './App'
+import './index.css'
+import * as serviceWorker from './serviceWorker'
 
 ReactDOM.render(
 

@@ -1,25 +1,21 @@
-import React, { useEffect, useState } from 'react'
 import { Layout } from 'antd'
+import 'antd/dist/antd.css'
+import axios from 'axios'
 import _ from 'lodash'
-
-import FloorPlan from './components/FloorPlan'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
+import './App.css'
+import FloorPlan, { deskTags } from './components/FloorPlan'
 import Navigation from './components/Navigation'
 import UsersList from './components/UsersList'
-
-import UserService, { IUserElement, IDeskAssignment } from './shared/services/UserService'
-import FloorService, { IFloor } from './shared/services/FloorService'
-
-import './App.css'
-import 'antd/dist/antd.css'
-import AssetService, { assignedToPath } from './shared/services/AssetService'
 import { DEFAULT_SCENE_ID } from './shared/constants'
+import AssetService, { assignedToPath } from './shared/services/AssetService'
+import FloorService, { IFloor } from './shared/services/FloorService'
+import UserService, { IDeskAssignment, IUserElement } from './shared/services/UserService'
 
 const App = () => {
   const { Sider, Content } = Layout
   const urlParams = new URLSearchParams(window.location.search)
   const sceneId = urlParams.get('sceneId') || DEFAULT_SCENE_ID
-  
-
 
   const [users, setUsers] = useState<Array<IUserElement>>([])
   const [deskAssignments, setDeskAssignments] = useState<Array<IDeskAssignment>>([])
@@ -28,7 +24,36 @@ const App = () => {
   const [removedDeskAssignment, removeDeskAssignment] = useState<IDeskAssignment>()
   const [floor, setFloor] = useState<IFloor>()
 
+  const [token, setToken] = useState<string>()
+
+  useLayoutEffect(() => {
+
+    // get temporary token
+    let tempToken: null | string = null
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/temp-token`).then(response => {
+      tempToken = response?.data?.authorization
+      if (!tempToken) return;
+
+      setToken(tempToken)
+
+      axios.interceptors.request.use((config) => {
+        config.params = config.params || {};
+
+        if (tempToken) {
+          config.headers.common['Authorization'] = tempToken;
+        }
+        return config;
+      }, (error) => {
+        console.log(error)
+        return Promise.reject(error);
+      });
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   useEffect(() => {
+    if (!sceneId || !token) return
+
     isLoading(true)
 
     // load users
@@ -42,19 +67,36 @@ const App = () => {
       })
     })
 
-    // get floor's assets to load already existing desk assignments
+    // get floor's assets to load already  existing desk assignments
     AssetService.fetchFloorAssets(sceneId).then((response: any) => {
-      setDeskAssignments(response.data.features.filter((feature: any) => {
-        return !_.isUndefined(_.get(feature, assignedToPath + '.userId'))
-      }).map((feature: any) => {
-        return {
-          deskId: feature.id,
-          userId: _.get(feature, assignedToPath + '.userId')
-        }
-      }))
-      isLoading(false)
+      const deskAssets = response.data.features.filter((f: any) => f.properties.tags.find((t: any) => deskTags.includes(t)))
+      const deskAssetsIds = deskAssets.map((d: any) => d.id)
+      AssetService.fetchAssetsCustomField(deskAssetsIds).then(axios.spread((...responses: any[]) => {
+        const deskAssignments = deskAssetsIds.map((id: string, index: number) => {
+          if (responses[index]?.data.properties && responses[index].data.properties.customFields.assignedTo?.userId) {
+            return {
+              deskId: id,
+              userId: responses[index].data.properties.customFields.assignedTo.userId
+            }
+          }
+        }).filter( (da: any) => da !== undefined)
+        setDeskAssignments(deskAssignments)
+      })).finally(() => { isLoading(false) })
     })
-  }, [sceneId])
+
+    // AssetService.fetchFloorAssets(sceneId).then((response: any) => {
+    //   setDeskAssignments(response.data.features.filter((feature: any) => {
+    //     console.log(feature.properties.customFields)
+    //     return !_.isUndefined(_.get(feature, assignedToPath + '.userId'))
+    //   }).map((feature: any) => {
+    //     return {
+    //       deskId: feature.id,
+    //       userId: _.get(feature, assignedToPath + '.userId')
+    //     }
+    //   }))
+    //   isLoading(false)
+    // })
+  }, [sceneId, token])
 
   useEffect(() => {
     // remove desk assignment

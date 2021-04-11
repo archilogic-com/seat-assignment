@@ -156,7 +156,7 @@ export const assignedToPath = 'properties.customFields.assignedTo'
 const resourceType = 'asset'
 
 const assignUser = (deskAssignment: IDeskAssignment) => {
-    return axios.put(`${PROXY_URL}/v1/${resourceType}/${deskAssignment.deskId}/custom-field/${assignedToPath}`, {userId: deskAssignment.userId})
+    return axios.put(`${PROXY_URL}/v2/${resourceType}/${deskAssignment.deskId}/custom-field/${assignedToPath}`, {userId: deskAssignment.userId})
 }
 ```
 
