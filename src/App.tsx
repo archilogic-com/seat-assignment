@@ -84,18 +84,6 @@ const App = () => {
       })).finally(() => { isLoading(false) })
     })
 
-    // AssetService.fetchFloorAssets(sceneId).then((response: any) => {
-    //   setDeskAssignments(response.data.features.filter((feature: any) => {
-    //     console.log(feature.properties.customFields)
-    //     return !_.isUndefined(_.get(feature, assignedToPath + '.userId'))
-    //   }).map((feature: any) => {
-    //     return {
-    //       deskId: feature.id,
-    //       userId: _.get(feature, assignedToPath + '.userId')
-    //     }
-    //   }))
-    //   isLoading(false)
-    // })
   }, [sceneId, token])
 
   useEffect(() => {
