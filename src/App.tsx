@@ -8,7 +8,7 @@ import FloorPlan, { deskTags } from './components/FloorPlan'
 import Navigation from './components/Navigation'
 import UsersList from './components/UsersList'
 import { DEFAULT_SCENE_ID } from './shared/constants'
-import AssetService, { assignedToPath } from './shared/services/AssetService'
+import AssetService from './shared/services/AssetService'
 import FloorService, { IFloor } from './shared/services/FloorService'
 import UserService, { IDeskAssignment, IUserElement } from './shared/services/UserService'
 
@@ -79,7 +79,8 @@ const App = () => {
               userId: responses[index].data.properties.customFields.assignedTo.userId
             }
           }
-        }).filter( (da: any) => da !== undefined)
+          return undefined
+        }).filter((da: any) => da !== undefined)
         setDeskAssignments(deskAssignments)
       })).finally(() => { isLoading(false) })
     })

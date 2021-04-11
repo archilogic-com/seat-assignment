@@ -1,8 +1,6 @@
-import { IDeskAssignment } from './UserService'
-import { PROXY_URL } from '../constants'
-import { env } from 'process'
-import { constants } from 'buffer'
 import axios from 'axios'
+import { PROXY_URL } from '../constants'
+import { IDeskAssignment } from './UserService'
 
 export interface IAsset {
     id: string
