@@ -4,6 +4,22 @@ This is a simple prototype of a seat assignment app for managing seat assignment
 
 Check out a [Demo](https://archilogic-seat-assignment.herokuapp.com)
 
+## Setup local server 
+
+Navigate to the server folder and run:
+
+    yarn install
+
+The server needs a secret token to negotiate a temporary token.
+
+https://developers.archilogic.com/space-api/v2/introduction.html#secret-access-token
+
+Create a new secret token and add it to the ARCHILOGIC_SECRET_KEY environment variable.
+
+then run:
+
+    node server.js
+
 ## Install and Run
 
 In the project directory, you can run:
