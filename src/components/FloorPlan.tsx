@@ -39,9 +39,9 @@ const floorPlanStartupSettings = {
 export const deskTags = ['table', 'work table']
 
 const colors = {
-  assignable: [0, 184, 148],
-  assigned: [225, 112, 85]
-} 
+    assignable: [0, 184, 148],
+    assigned: [225, 112, 85]
+}
 
 interface FloorPlanProps {
     sceneId: string,
@@ -51,8 +51,8 @@ interface FloorPlanProps {
 }
 
 const FloorPlan = (props: FloorPlanProps) => {
-    const { 
-        sceneId, 
+    const {
+        sceneId,
         deskAssignments,
         addDeskAssignment,
         removedDeskAssignment
@@ -66,7 +66,7 @@ const FloorPlan = (props: FloorPlanProps) => {
 
     const isDesk = (furnitureItem: any) => {
         return _.some(deskTags, (tag) => {
-          return _.includes(furnitureItem.tags, tag)
+            return _.includes(furnitureItem.tags, tag)
         })
     }
 
@@ -88,15 +88,15 @@ const FloorPlan = (props: FloorPlanProps) => {
     }
 
     const highlightDesk = (furnitureItem: any) => {
-        furnitureItem.node.setHighlight({fill: colors.assignable})
+        furnitureItem.node.setHighlight({ fill: colors.assignable })
     }
 
     // highlight assigned desks
     const highlightAssignedDesks = (deskAssignments: Array<IDeskAssignment>, desks: Array<any>) => {
-        deskAssignments.forEach( (deskAssignment: IDeskAssignment) => {
+        deskAssignments.forEach((deskAssignment: IDeskAssignment) => {
             const furnitureItem = findById(desks, deskAssignment.deskId)
             const user = UserService.findById(deskAssignment.userId)
-            
+
             if (!furnitureItem || !user) return
 
             highlightAssignedDesk(furnitureItem)
@@ -104,14 +104,16 @@ const FloorPlan = (props: FloorPlanProps) => {
     }
 
     const highlightAssignedDesk = (furnitureItem: any) => {
-        furnitureItem.node.setHighlight({fill: colors.assigned})
+        furnitureItem.node.setHighlight({ fill: colors.assigned })
     }
 
     // load floorPlan and highlight desks
     useEffect(() => {
         const container = document.getElementById(containerId)
         const floorPlan = new FloorPlanEngine(container, floorPlanStartupSettings)
-        floorPlan.loadScene(sceneId).then(() => {
+        const publishableToken = process.env.REACT_APP_PUBLISHABLE_TOKEN
+
+        floorPlan.loadScene(sceneId, { publishableToken }).then(() => {
             const spaces = floorPlan.resources.spaces || []
             const furniture = floorPlan.resources.assets || []
             setFloorPlan(floorPlan)
@@ -152,18 +154,18 @@ const FloorPlan = (props: FloorPlanProps) => {
             return String(item.deskId) === String(clickedDesk.id)
         });
 
-        if(!assignment) return;
+        if (!assignment) return;
         const user = UserService.findById(assignment.userId)
 
         clickedDesk.infoWindow = floorPlan.addInfoWindow({
-          pos: [clickedDesk.position.x, clickedDesk.position.z],
-          width: 150,
-          height: 80,
-          html: '<div>' + 
-                  '<div class="user-photo"><img src="'+user.photoUrl+'"/></div>' + 
-                  '<div class="user-name">'+user.firstName+' '+user.lastName+'</div>' + 
+            pos: [clickedDesk.position.x, clickedDesk.position.z],
+            width: 150,
+            height: 80,
+            html: '<div>' +
+                '<div class="user-photo"><img src="' + user.photoUrl + '"/></div>' +
+                '<div class="user-name">' + user.firstName + ' ' + user.lastName + '</div>' +
                 '</div>',
-          closeButton: true
+            closeButton: true
         })
 
         return () => { clickedDesk.infoWindow.remove(); }
@@ -177,7 +179,7 @@ const FloorPlan = (props: FloorPlanProps) => {
 
         setClickedDesk(furnitureItem);
     }
-    
+
     const onDrop = (archilogicEvent: any, floorPlan: any) => {
         const event = archilogicEvent.sourceEvent;
 
@@ -185,20 +187,20 @@ const FloorPlan = (props: FloorPlanProps) => {
 
         const position = [event.offsetX, event.offsetY];
         const { assets } = floorPlan.getResourcesFromPosition(floorPlan.getPlanPosition(position));
-        
+
         if (assets.length === 0 || !isDesk(assets[0])) return;
         const furnitureItem = assets[0];
 
         const userId = event?.dataTransfer?.getData('text')
-  
-        if (!userId) return;        
-        
+
+        if (!userId) return;
+
         const user = UserService.findById(parseInt(userId))
 
         if (!furnitureItem || !user) return
 
         addDeskAssignment({
-            userId: parseInt(userId), 
+            userId: parseInt(userId),
             deskId: furnitureItem.id
         })
 
