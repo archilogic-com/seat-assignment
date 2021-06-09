@@ -12,7 +12,7 @@ export interface IFloorService {
 
 
 const findById = (floorId: string) => {
-    return axios.get(`${PROXY_URL}/v1/floor/${floorId}`)
+    return axios.get(`${PROXY_URL}/v2/floor/${floorId}`)
 }
 const FloorService: IFloorService = {
     findById: findById

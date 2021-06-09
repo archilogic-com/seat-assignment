@@ -1,2 +1,2 @@
 export const PROXY_URL = process.env.REACT_APP_ARCHILOGIC_API_URL
-export const DEFAULT_SCENE_ID = 'a9aaafdf-d5b6-4b4a-82a0-9efb6d5b155a'
+export const DEFAULT_SCENE_ID = 'b6aa6096-bb77-4872-be25-4886a9e5bf06'
