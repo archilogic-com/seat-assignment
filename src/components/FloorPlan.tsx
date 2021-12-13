@@ -165,7 +165,7 @@ const FloorPlan = (props: FloorPlanProps) => {
                 '<div class="user-photo"><img src="' + user.photoUrl + '"/></div>' +
                 '<div class="user-name">' + user.firstName + ' ' + user.lastName + '</div>' +
                 '</div>',
-            closeButton: true
+            closeButton: false
         })
 
         return () => { clickedDesk.infoWindow.remove(); }

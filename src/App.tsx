@@ -99,6 +99,7 @@ const App = () => {
       setDeskAssignments(deskAssignments.filter((item) => {
         return item.deskId !== removedDeskAssignment.deskId
       }))
+    }).then(() => {
       setUsers(users?.map((stateUser) => {
         return stateUser.id === removedDeskAssignment.userId ? { ...stateUser, "isLoading": false } : stateUser
       }))
