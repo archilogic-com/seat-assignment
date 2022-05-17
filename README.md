@@ -14,7 +14,13 @@ The server needs a secret token to negotiate a temporary token.
 
 https://developers.archilogic.com/space-api/v2/introduction.html#secret-access-token
 
-Create a new secret token and add it to the ARCHILOGIC_SECRET_KEY environment variable.
+Create a new secret token and add it to the ARCHILOGIC_SECRET_KEY environment variable. Additionally, set the ARCHILOGIC_API_URL variable
+
+```bash
+export ARCHILOGIC_SECRET_KEY=<secret-key-goes-here>
+export ARCHILOGIC_API_URL=https://api.archilogic.com
+```
+
 
 then run:
 
@@ -30,6 +36,7 @@ This command will install all the dependencies needed for the project to run loc
 
 To run the app we'll need to set some environment variables first.  
 You'll need an API key [https://developers.archilogic.com/api-keys.html](https://developers.archilogic.com/api-keys.html).  
+
 
 ![](token.png)
 
