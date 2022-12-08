@@ -35,7 +35,7 @@ In the project directory, you can run:
 This command will install all the dependencies needed for the project to run locally.
 
 To run the app we'll need to set some environment variables first.  
-You'll need an API key [https://developers.archilogic.com/api-keys.html](https://developers.archilogic.com/api-keys.html).  
+You'll need an [API key](https://developers.archilogic.com/space-api/v2/introduction.html#authentication-and-authorization).  
 
 
 ![](token.png)
@@ -237,7 +237,7 @@ Generate RFC-compliant UUIDs in JavaScript.
 ## Notes
 
 `Why do we need to have a proxy app to hit Archilogic's Space API?`  
-This is a [Secret API](https://developers.archilogic.com/space-api/v1/introduction.html#secret-api-keys) key and we don't want to expose it in the client app.
+This is a [Secret API](https://developers.archilogic.com/space-api/v2/introduction.html) key and we don't want to expose it in the client app.
 
 `How does the HTML drag and drop API work?`  
 Very nice article [here](https://alligator.io/js/drag-and-drop-vanilla-js/) from Jess Mitchell
